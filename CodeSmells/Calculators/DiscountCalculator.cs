@@ -29,12 +29,12 @@ namespace CodeSmells.Calculators
         {
             var rangeStart = 0m;
             var discount = 0m;
-            Dictionary<decimal, double> thresholds = TresholdRepository.Get();
-            foreach (var pair in thresholds)
+            var thresholds = new TresholdRepository().Get();
+            foreach (var treshold in thresholds)
             {
-                discounts.Add(new Discount(rangeStart, pair.Key, discount));
-                discount = (decimal)pair.Value;
-                rangeStart = pair.Key;
+                discounts.Add(new Discount(rangeStart, treshold.LimitBottom, discount));
+                discount = (decimal)treshold.Discount;
+                rangeStart = treshold.LimitBottom;
             }
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
