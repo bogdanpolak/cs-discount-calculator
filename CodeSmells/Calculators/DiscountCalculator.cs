@@ -25,11 +25,11 @@ namespace CodeSmells.Calculators
 
         private List<Discount> discounts = new List<Discount>();
 
-        private void GenerateDiscountTable()
+        private void GenerateDiscountTable(CustomerLevel level)
         {
             var rangeStart = 0m;
             var discount = 0m;
-            var thresholds = new TresholdRepository().Get(CustomerLevel.gold);
+            var thresholds = new TresholdRepository().Get(level);
             foreach (var treshold in thresholds)
             {
                 discounts.Add(new Discount(rangeStart, treshold.LimitBottom, discount));
@@ -39,11 +39,11 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(IEnumerable<OrderItem> orderItems)
+        public Decimal Calculate(CustomerLevel level, IEnumerable<OrderItem> orderItems)
         {
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
-                GenerateDiscountTable();
+                GenerateDiscountTable(level);
             var discountValue = discounts
                 .Where(d => totalBeforeDiscount.InRange(d.RangeStart, d.RangeEnd))
                 .Select(d => d.Value)

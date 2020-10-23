@@ -30,9 +30,9 @@ namespace CodeSmells.Repositories
             new Treshold( CustomerLevel.standard, 2000.00m, 0.03 ),
             new Treshold( CustomerLevel.standard, 3000.00m, 0.04 ),
             // silver
-            new Treshold( CustomerLevel.silver, 900.00m, 0.03 ),
-            new Treshold( CustomerLevel.silver, 1500.00m, 0.04 ),
-            new Treshold( CustomerLevel.silver, 2000.00m, 0.06 ),
+            new Treshold( CustomerLevel.silver, 800.00m, 0.02 ),
+            new Treshold( CustomerLevel.silver, 1500.00m, 0.03 ),
+            new Treshold( CustomerLevel.silver, 2000.00m, 0.05 ),
             // gold
             new Treshold( CustomerLevel.gold,  700.00m, 0.02 ),
             new Treshold( CustomerLevel.gold, 1000.00m, 0.03 ),
