@@ -29,7 +29,7 @@ namespace CodeSmells.Calculators
         {
             var rangeStart = 0m;
             var discount = 0m;
-            var thresholds = new TresholdRepository().Get();
+            var thresholds = new TresholdRepository().Get(CustomerLevel.gold);
             foreach (var treshold in thresholds)
             {
                 discounts.Add(new Discount(rangeStart, treshold.LimitBottom, discount));
