@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeSmells.Repositories;
 
 namespace CodeSmells.Calculators
 {
@@ -20,35 +21,33 @@ namespace CodeSmells.Calculators
             }
         }
 
-        private Dictionary<decimal, double> thresholds = new Dictionary<decimal, double>()
-        {
-            { 1000.00m, 0.03d },
-            { 1400.00m, 0.05d },
-            { 1900.00m, 0.08d }
-        };
-
         const decimal MAX_PRICE = 999999999.00m;
 
         private List<Discount> discounts = new List<Discount>();
 
-        private void GenerateDiscountTable()
+        private void GenerateDiscountTable(string level)
         {
             var rangeStart = 0m;
             var discount = 0m;
-            foreach (var pair in thresholds)
+            var thresholds = new TresholdRepository().Get(level);
+            foreach (var treshold in thresholds)
             {
-                discounts.Add(new Discount(rangeStart, pair.Key, discount));
-                discount = (decimal)pair.Value;
-                rangeStart = pair.Key;
+                discounts.Add(new Discount(rangeStart, treshold.LimitBottom, discount));
+                discount = (decimal)treshold.Discount;
+                rangeStart = treshold.LimitBottom;
             }
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(IEnumerable<OrderItem> orderItems)
+        public Decimal Calculate(string level, IEnumerable<OrderItem> orderItems)
         {
+            if (!Treshold.isLevelValid(level))
+                throw new ArgumentException(
+                    $"Invalid customer level (actual value:{level}"+
+                    ", but expected one of: standard, silver, gold", "level");
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
-                GenerateDiscountTable();
+                GenerateDiscountTable(level);
             var discountValue = discounts
                 .Where(d => totalBeforeDiscount.InRange(d.RangeStart, d.RangeEnd))
                 .Select(d => d.Value)
