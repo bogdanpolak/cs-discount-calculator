@@ -13,7 +13,7 @@ namespace CodeSmells
             var orders = new List<OrderItem>() {
                 new OrderItem(25, "blue jeans trousers", true, 100, 2)
             };
-            var actual = new DiscountCalculator().Calculate(CustomerLevel.gold, orders);
+            var actual = new DiscountCalculator().Calculate("gold", orders);
             Assert.Equal(200.00m, actual);
         }
 
@@ -23,7 +23,7 @@ namespace CodeSmells
             var orders = new List<OrderItem>() {
                 new OrderItem(25, "blue jeans trousers", true, 100, 11)
             };
-            var actual = new DiscountCalculator().Calculate(CustomerLevel.gold, orders);
+            var actual = new DiscountCalculator().Calculate("gold", orders);
             // 1100 * 0.3 = 1067
             Assert.Equal(1067.00m, actual);
         }
@@ -39,7 +39,7 @@ namespace CodeSmells
             // total before: 2570 = 2000 + 90 + 480
             // discount: 8%
             // 2000*0.92 + 90 + 480*0.92 = 1840 + 90 + 441,60 = 2371.60
-            var actual = new DiscountCalculator().Calculate(CustomerLevel.gold, orders);
+            var actual = new DiscountCalculator().Calculate("gold", orders);
             Assert.Equal(2371.60m, actual);
         }
     }

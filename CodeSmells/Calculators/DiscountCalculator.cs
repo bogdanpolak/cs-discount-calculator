@@ -25,7 +25,7 @@ namespace CodeSmells.Calculators
 
         private List<Discount> discounts = new List<Discount>();
 
-        private void GenerateDiscountTable(CustomerLevel level)
+        private void GenerateDiscountTable(string level)
         {
             var rangeStart = 0m;
             var discount = 0m;
@@ -39,7 +39,7 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(CustomerLevel level, IEnumerable<OrderItem> orderItems)
+        public Decimal Calculate(string level, IEnumerable<OrderItem> orderItems)
         {
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)

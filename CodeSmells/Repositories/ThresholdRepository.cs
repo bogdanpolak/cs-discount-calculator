@@ -1,21 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CodeSmells.Repositories
 {
-    public enum CustomerLevel {
-        standard,
-        silver,
-        gold
-    };
-
     public class Treshold {
-        public CustomerLevel Level { get; }
+        public string Level { get; }
         public decimal LimitBottom { get; }
         public double Discount { get; }
 
-        public Treshold(CustomerLevel level, decimal limitBottom, double discount)
+        public Treshold(string level, decimal limitBottom, double discount)
         {
+            if (level != "standard" || level != "silver" || level != "gold")
+                throw new ArgumentException(
+                    $"Invalid customer level (actual value:{level}"+
+                    ", but expected one of: standard, silver, gold", "level");
             Level = level;
             LimitBottom = limitBottom;
             Discount = discount;
@@ -26,21 +25,21 @@ namespace CodeSmells.Repositories
         private List<Treshold> thresholds = new List<Treshold>()
         {
             // standard
-            new Treshold( CustomerLevel.standard, 1000.00m, 0.02 ),
-            new Treshold( CustomerLevel.standard, 2000.00m, 0.03 ),
-            new Treshold( CustomerLevel.standard, 3000.00m, 0.04 ),
+            new Treshold( "standard", 1000.00m, 0.02 ),
+            new Treshold( "standard", 2000.00m, 0.03 ),
+            new Treshold( "standard", 3000.00m, 0.04 ),
             // silver
-            new Treshold( CustomerLevel.silver, 800.00m, 0.02 ),
-            new Treshold( CustomerLevel.silver, 1500.00m, 0.03 ),
-            new Treshold( CustomerLevel.silver, 2000.00m, 0.05 ),
+            new Treshold( "silver", 800.00m, 0.02 ),
+            new Treshold( "silver", 1500.00m, 0.03 ),
+            new Treshold( "silver", 2000.00m, 0.05 ),
             // gold
-            new Treshold( CustomerLevel.gold,  700.00m, 0.02 ),
-            new Treshold( CustomerLevel.gold, 1000.00m, 0.03 ),
-            new Treshold( CustomerLevel.gold, 1400.00m, 0.05 ),
-            new Treshold( CustomerLevel.gold, 1900.00m, 0.08 )
+            new Treshold( "gold",  700.00m, 0.02 ),
+            new Treshold( "gold", 1000.00m, 0.03 ),
+            new Treshold( "gold", 1400.00m, 0.05 ),
+            new Treshold( "gold", 1900.00m, 0.08 )
         };
 
-        public IList<Treshold> Get(CustomerLevel level) => thresholds
+        public IList<Treshold> Get(string level) => thresholds
             .Where( tr => tr.Level == level )
             .OrderBy ( tr => tr.LimitBottom )
             .ToList();
