@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeSmells.Repositories;
 
 namespace CodeSmells.Calculators
 {
@@ -20,13 +21,6 @@ namespace CodeSmells.Calculators
             }
         }
 
-        private Dictionary<decimal, double> thresholds = new Dictionary<decimal, double>()
-        {
-            { 1000.00m, 0.03d },
-            { 1400.00m, 0.05d },
-            { 1900.00m, 0.08d }
-        };
-
         const decimal MAX_PRICE = 999999999.00m;
 
         private List<Discount> discounts = new List<Discount>();
@@ -35,6 +29,7 @@ namespace CodeSmells.Calculators
         {
             var rangeStart = 0m;
             var discount = 0m;
+            Dictionary<decimal, double> thresholds = TresholdRepository.Get();
             foreach (var pair in thresholds)
             {
                 discounts.Add(new Discount(rangeStart, pair.Key, discount));
