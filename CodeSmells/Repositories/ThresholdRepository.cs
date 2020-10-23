@@ -9,9 +9,12 @@ namespace CodeSmells.Repositories
         public decimal LimitBottom { get; }
         public double Discount { get; }
 
+        public static bool isLevelValid (string level) => 
+            (level == "standard" || level == "silver" || level == "gold");
+
         public Treshold(string level, decimal limitBottom, double discount)
         {
-            if (level != "standard" || level != "silver" || level != "gold")
+            if ( !isLevelValid(level) )
                 throw new ArgumentException(
                     $"Invalid customer level (actual value:{level}"+
                     ", but expected one of: standard, silver, gold", "level");

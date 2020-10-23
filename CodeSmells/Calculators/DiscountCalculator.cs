@@ -41,6 +41,10 @@ namespace CodeSmells.Calculators
 
         public Decimal Calculate(string level, IEnumerable<OrderItem> orderItems)
         {
+            if (!Treshold.isLevelValid(level))
+                throw new ArgumentException(
+                    $"Invalid customer level (actual value:{level}"+
+                    ", but expected one of: standard, silver, gold", "level");
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
                 GenerateDiscountTable(level);
