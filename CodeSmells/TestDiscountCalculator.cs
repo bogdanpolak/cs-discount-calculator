@@ -6,42 +6,49 @@ using CodeSmells.Repositories;
 
 namespace CodeSmells
 {
+    public class Gloabal
+    {
+        static public TresholdRepository tresholdRepository = new TresholdRepository();
+        static public OrderRepository orderRepository = new OrderRepository();
+    }
+
     public class TestDiscountCalculator
     {
-        public DiscountCalculator calculator;
-
-        const int ORDERID1 = 1;
+        private DiscountCalculator calculator;
 
         public TestDiscountCalculator() {
-            calculator = new DiscountCalculator();
+            calculator = new DiscountCalculator(Gloabal.orderRepository,
+                Gloabal.tresholdRepository);
         }
 
         [Fact]
         public void Calculate_WithInvalidCustomerLevel()
         {
-            var orders = new List<OrderItem>() {
-                new OrderItem(ORDERID1, 25, "blue jeans trousers", true, 100, 2)
-            };
-            Assert.Throws<ArgumentException>( () => calculator.Calculate("invalid", orders) );
+            var orderid = Gloabal.orderRepository.AddOrder ( new List<OrderItem>() {
+                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 2)
+            });
+            Assert.Throws<ArgumentException>( () => calculator.Calculate("invalid", orderid) );
+            Gloabal.orderRepository.RemoveOrder(orderid);          
         }
 
         [Fact]
         public void Calculate_WithOneItem_WhenTotalBelowDiscount()
         {
-            var orders = new List<OrderItem>() {
-                new OrderItem(ORDERID1, 25, "blue jeans trousers", true, 100, 2)
-            };
-            var actual = calculator.Calculate("gold", orders);
+            var orderid = Gloabal.orderRepository.AddOrder(new List<OrderItem>() {
+                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 2)
+            });
+            var actual = calculator.Calculate("gold", orderid);
             Assert.Equal(200.00m, actual);
+            Gloabal.orderRepository.RemoveOrder(orderid);
         }
 
         [Fact]
         public void Calculate_WithOneItem_WhenTotalIsAboveFirstTreshold()
         {
-            var orders = new List<OrderItem>() {
-                new OrderItem(ORDERID1, 25, "blue jeans trousers", true, 100, 11)
-            };
-            var actual = calculator.Calculate("gold", orders);
+            var orderid = Gloabal.orderRepository.AddOrder(new List<OrderItem>() {
+                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 11)
+            });
+            var actual = calculator.Calculate("gold", orderid);
             // 1100 * 0.3 = 1067
             Assert.Equal(1067.00m, actual);
         }
@@ -49,15 +56,7 @@ namespace CodeSmells
         [Fact]
         public void Calculate_WithDiscount_OneItemNotDeducted()
         {
-            var orders = new List<OrderItem>() {
-                new OrderItem(ORDERID1, 25, "blue jeans trousers", true, 100, 20),
-                new OrderItem(ORDERID1, 2, "transport service", false, 90, 1),
-                new OrderItem(ORDERID1, 99, "sport shoes", true, 120, 4)
-            };
-            // total before: 2570 = 2000 + 90 + 480
-            // discount: 8%
-            // 2000*0.92 + 90 + 480*0.92 = 1840 + 90 + 441,60 = 2371.60
-            var actual = new DiscountCalculator().Calculate("gold", orders);
+            var actual = calculator.Calculate("gold", 1);
             Assert.Equal(2371.60m, actual);
         }
     }

@@ -7,11 +7,21 @@ namespace CodeSmells.Calculators
 {
     public class DiscountCalculator
     {
+        private OrderRepository _orderRepository;
+        public TresholdRepository _tresholdRepository;
+
+        public DiscountCalculator(OrderRepository orderRepository,
+            TresholdRepository tresholdRepository)
+        {
+            _orderRepository = orderRepository;
+            _tresholdRepository = tresholdRepository;
+        }
+
         private class Discount
         {
             public decimal RangeStart { get; }
             public decimal RangeEnd { get; }
-            public decimal Value { get;  }
+            public decimal Value { get; }
 
             public Discount(decimal rangeStart, decimal rangeEnd, decimal value)
             {
@@ -29,7 +39,7 @@ namespace CodeSmells.Calculators
         {
             var rangeStart = 0m;
             var discount = 0m;
-            var thresholds = new TresholdRepository().Get(level);
+            var thresholds = _tresholdRepository.Get(level);
             foreach (var treshold in thresholds)
             {
                 discounts.Add(new Discount(rangeStart, treshold.LimitBottom, discount));
@@ -39,12 +49,13 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(string level, IEnumerable<OrderItem> orderItems)
+        public Decimal Calculate(string level, int orderId)
         {
             if (!Treshold.isLevelValid(level))
                 throw new ArgumentException(
-                    $"Invalid customer level (actual value:{level}"+
+                    $"Invalid customer level (actual value:{level}" +
                     ", but expected one of: standard, silver, gold", "level");
+            var orderItems = _orderRepository.LoadOrder(orderId).ToList();
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
                 GenerateDiscountTable(level);
@@ -55,10 +66,10 @@ namespace CodeSmells.Calculators
             var totalAfterDeduction = 0m;
             foreach (OrderItem item in orderItems)
             {
-                if (discountValue>0 && item.AllowsDeduction)
+                if (discountValue > 0 && item.AllowsDeduction)
                 {
                     item.Deduction = discountValue;
-                    item.Total = item.UnitPrice * item.Units * (1-item.Deduction);
+                    item.Total = item.UnitPrice * item.Units * (1 - item.Deduction);
                 }
                 else
                 {

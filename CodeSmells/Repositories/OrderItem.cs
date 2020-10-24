@@ -2,7 +2,7 @@
 {
     public class OrderItem
     {
-        public int OrderId { get; }
+        public int OrderId { get; set; }
         public int ProductId { get; }
         public string ProductName { get; }
         public bool AllowsDeduction { get; set; }
