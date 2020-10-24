@@ -25,7 +25,7 @@ namespace CodeSmells
         public void Calculate_WithInvalidCustomerLevel()
         {
             var orderid = Gloabal.orderRepository.AddOrder ( new List<OrderItem>() {
-                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 2)
+                new OrderItem(-1, "PL5664390716", 25, "blue jeans trousers", true, 100, 2)
             });
             Assert.Throws<ArgumentException>( () => calculator.Calculate("invalid", orderid) );
             Gloabal.orderRepository.RemoveOrder(orderid);          
@@ -35,7 +35,7 @@ namespace CodeSmells
         public void Calculate_WithOneItem_WhenTotalBelowDiscount()
         {
             var orderid = Gloabal.orderRepository.AddOrder(new List<OrderItem>() {
-                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 2)
+                new OrderItem(-1, "PL5664390716", 25, "blue jeans trousers", true, 100, 2)
             });
             var actual = calculator.Calculate("gold", orderid);
             Assert.Equal(200.00m, actual);
@@ -46,7 +46,7 @@ namespace CodeSmells
         public void Calculate_WithOneItem_WhenTotalIsAboveFirstTreshold()
         {
             var orderid = Gloabal.orderRepository.AddOrder(new List<OrderItem>() {
-                new OrderItem(-1, 25, "blue jeans trousers", true, 100, 11)
+                new OrderItem(-1, "PL5664390716", 25, "blue jeans trousers", true, 100, 11)
             });
             var actual = calculator.Calculate("gold", orderid);
             // 1100 * 0.3 = 1067
