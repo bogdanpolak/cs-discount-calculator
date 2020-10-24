@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeSmells.Repositories
 {
@@ -16,5 +17,26 @@ namespace CodeSmells.Repositories
             new Customer("DE136695976","Haag GmbH","standard"),
             new Customer("DE301204526","Haag GmbH","gold")
         };
+
+        public void AddCustomer(Customer customer)
+        {
+            if (!Treshold.isLevelValid(customer.Level))
+                throw new ArgumentException(
+                    $"Invalid customer level (actual value:{customer.Level}" +
+                    ", but expected one of: standard, silver, gold", "customer");
+            if (customers.Exists(c => c.VatID == customer.VatID))
+                throw new ArgumentException(
+                    $"Customer with id={customer.VatID} already exists",
+                    "customer");
+            customers.Add(customer);
+        }
+
+        public void RemoveCustomer (string customerid)
+        {
+            customers.Remove(customers.First(c => c.VatID == customerid));
+        }
+
+        public Customer GetCustomer(string customerid) =>
+            customers.Where(c => c.VatID == customerid).FirstOrDefault();
     }
 }

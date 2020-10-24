@@ -48,7 +48,7 @@ namespace CodeSmells.Repositories
                 orders.Remove(orderitem);
         }
 
-        public IEnumerable<OrderItem> LoadOrder(int orderId)
+        public IEnumerable<OrderItem> GetOrder(int orderId)
         {
             var order = orders.Where(o => o.OrderId == orderId);
             return order==null ? new List<OrderItem>() : order;

@@ -9,12 +9,15 @@ namespace CodeSmells.Calculators
     {
         private OrderRepository _orderRepository;
         public TresholdRepository _tresholdRepository;
+        public CustomerRepository _customerRepository;
 
         public DiscountCalculator(OrderRepository orderRepository,
-            TresholdRepository tresholdRepository)
+            TresholdRepository tresholdRepository,
+            CustomerRepository customerRepository)
         {
             _orderRepository = orderRepository;
             _tresholdRepository = tresholdRepository;
+            _customerRepository = customerRepository;
         }
 
         private class Discount
@@ -49,16 +52,14 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(string level, int orderId)
+        public Decimal Calculate(int orderId)
         {
-            if (!Treshold.isLevelValid(level))
-                throw new ArgumentException(
-                    $"Invalid customer level (actual value:{level}" +
-                    ", but expected one of: standard, silver, gold", "level");
-            var orderItems = _orderRepository.LoadOrder(orderId).ToList();
+            var orderItems = _orderRepository.GetOrder(orderId).ToList();
+            var customerId = orderItems.Select(c => c.CustomerId).FirstOrDefault();
+            Customer customer = _customerRepository.GetCustomer(customerId);
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
-                GenerateDiscountTable(level);
+                GenerateDiscountTable(customer.Level);
             var discountValue = discounts
                 .Where(d => totalBeforeDiscount.InRange(d.RangeStart, d.RangeEnd))
                 .Select(d => d.Value)

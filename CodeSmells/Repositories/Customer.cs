@@ -5,6 +5,10 @@ namespace CodeSmells.Repositories
     {
         public Customer(string vatID, string name, string level)
         {
+            if (!Treshold.isLevelValid(level))
+                throw new ArgumentException(
+                    $"Invalid customer level (actual value:{level}" +
+                    ", but expected one of: standard, silver, gold", "level");
             VatID = vatID;
             Name = name;
             Level = level;
