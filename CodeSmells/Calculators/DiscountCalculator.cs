@@ -52,7 +52,7 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(int orderId)
+        public decimal Calculate(int orderId)
         {
             var orderItems = _orderRepository.GetOrder(orderId).ToList();
             var customerId = orderItems.Select(c => c.CustomerId).FirstOrDefault();
