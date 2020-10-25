@@ -20,10 +20,9 @@ namespace CodeSmells.Repositories
 
         public void AddCustomer(Customer customer)
         {
-            if (!Treshold.isLevelValid(customer.Level))
+            if (!Threshold.IsLevelValid(customer.Level))
                 throw new ArgumentException(
-                    $"Invalid customer level (actual value:{customer.Level}" +
-                    ", but expected one of: standard, silver, gold", "customer");
+                    Threshold.GenInvalidLevelMsg(customer.Level), "customer");
             if (customers.Exists(c => c.VatID == customer.VatID))
                 throw new ArgumentException(
                     $"Customer with id={customer.VatID} already exists",
@@ -38,5 +37,9 @@ namespace CodeSmells.Repositories
 
         public Customer GetCustomer(string customerid) =>
             customers.Where(c => c.VatID == customerid).FirstOrDefault();
+
+        public string GetCustomerLevel(string customerid) =>
+            customers.Where(c => c.VatID == customerid)
+                .FirstOrDefault().Level;
     }
 }

@@ -5,10 +5,9 @@ namespace CodeSmells.Repositories
     {
         public Customer(string vatID, string name, string level)
         {
-            if (!Treshold.isLevelValid(level))
+            if (!Threshold.IsLevelValid(level))
                 throw new ArgumentException(
-                    $"Invalid customer level (actual value:{level}" +
-                    ", but expected one of: standard, silver, gold", "level");
+                    Threshold.GenInvalidLevelMsg(level), "level");
             VatID = vatID;
             Name = name;
             Level = level;
