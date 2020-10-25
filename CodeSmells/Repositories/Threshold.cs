@@ -7,15 +7,17 @@ namespace CodeSmells.Repositories
         public decimal LimitBottom { get; }
         public double Discount { get; }
 
-        public static bool isLevelValid(string level) =>
+        public static bool IsLevelValid(string level) =>
             (level == "standard" || level == "silver" || level == "gold");
+
+        public static string GenInvalidLevelMsg(string currentLevel) =>
+             $"Invalid customer level (actual value:{currentLevel}, but " +
+             "expected one of following: standard, silver, gold";
 
         public Threshold(string level, decimal limitBottom, double discount)
         {
-            if (!isLevelValid(level))
-                throw new ArgumentException(
-                    $"Invalid customer level (actual value:{level}" +
-                    ", but expected one of: standard, silver, gold", "level");
+            if (!IsLevelValid(level))
+                throw new ArgumentException(GenInvalidLevelMsg(level), "level");
             Level = level;
             LimitBottom = limitBottom;
             Discount = discount;
