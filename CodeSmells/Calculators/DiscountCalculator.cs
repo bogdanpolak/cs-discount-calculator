@@ -34,6 +34,8 @@ namespace CodeSmells.Calculators
             }
         }
 
+        Dictionary<int, decimal> totalBefore = new Dictionary<int, decimal>();
+
         const decimal MAX_PRICE = 999999999.00m;
 
         private List<Discount> discounts = new List<Discount>();
@@ -52,12 +54,13 @@ namespace CodeSmells.Calculators
             discounts.Add(new Discount(rangeStart, MAX_PRICE, discount));
         }
 
-        public Decimal Calculate(int orderId)
+        public decimal GetOrderTotal(int orderId)
         {
             var orderItems = _orderRepository.GetOrder(orderId).ToList();
             var customerId = orderItems.Select(c => c.CustomerId).FirstOrDefault();
             string level = _customerRepository.GetCustomerLevel(customerId);
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
+            totalBefore[orderId] = totalBeforeDiscount;
             if (discounts.Count == 0)
                 GenerateDiscountTable(level);
             var discountValue = discounts
@@ -80,5 +83,21 @@ namespace CodeSmells.Calculators
             }
             return totalAfterDeduction;
         }
+
+        private decimal CalcOrderDiscountImapct(int orderid)
+        {
+            var totalAfter = GetOrderTotal(orderid);
+            return totalBefore[orderid] - totalAfter;
+        }
+
+
+        public decimal GetDiscountImapct(Period period)
+        {
+            return _orderRepository
+                .GetOrderIds(period)
+                .Aggregate<int, decimal>( 0,
+                    (total, orderid) => total += CalcOrderDiscountImapct(orderid)
+                );
+        } 
     }
 }
