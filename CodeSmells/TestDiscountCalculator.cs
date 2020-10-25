@@ -38,7 +38,7 @@ namespace CodeSmells
             var customer = new Customer("PL54321", "Test S.A.", "gold");
             Globals.customerRepository.AddCustomer(customer);
             // "gold"
-            var actual = calculator.Calculate(orderid);
+            var actual = calculator.GetOrderTotal(orderid);
             Assert.Equal(200.00m, actual);
             Assert.Equal(200.00m, actual);
             Globals.orderRepository.RemoveOrder(orderid);
@@ -53,7 +53,7 @@ namespace CodeSmells
             });
             var customer = new Customer("PL12345", "Test S.A.", "gold");
             Globals.customerRepository.AddCustomer(customer);
-            var actual = calculator.Calculate(orderid);
+            var actual = calculator.GetOrderTotal(orderid);
             // 1100 * 0.3 = 1067
             Assert.Equal(1067.00m, actual);
             Globals.orderRepository.RemoveOrder(orderid);
@@ -63,7 +63,7 @@ namespace CodeSmells
         [Fact]
         public void Calculate_WithDiscount_OneItemNotDeducted()
         {
-            var actual = calculator.Calculate(1);
+            var actual = calculator.GetOrderTotal(1);
             Assert.Equal(2371.60m, actual);
         }
     }
