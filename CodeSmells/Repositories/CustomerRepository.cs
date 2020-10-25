@@ -12,6 +12,7 @@ namespace CodeSmells.Repositories
 
         private List<Customer> customers = new List<Customer>
         {
+            new Customer("PL1124267312","Modivo Sp. z o.o.","standard"),
             new Customer("PL3815422868","Wieczorek sp. z o.o.","gold"),
             new Customer("PL5352679105","Fundacja Michalak","silver"),
             new Customer("DE136695976","Haag GmbH","standard"),
