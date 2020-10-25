@@ -56,10 +56,10 @@ namespace CodeSmells.Calculators
         {
             var orderItems = _orderRepository.GetOrder(orderId).ToList();
             var customerId = orderItems.Select(c => c.CustomerId).FirstOrDefault();
-            Customer customer = _customerRepository.GetCustomer(customerId);
+            string level = _customerRepository.GetCustomerLevel(customerId);
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
             if (discounts.Count == 0)
-                GenerateDiscountTable(customer.Level);
+                GenerateDiscountTable(level);
             var discountValue = discounts
                 .Where(d => totalBeforeDiscount.InRange(d.RangeStart, d.RangeEnd))
                 .Select(d => d.Value)

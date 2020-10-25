@@ -37,5 +37,9 @@ namespace CodeSmells.Repositories
 
         public Customer GetCustomer(string customerid) =>
             customers.Where(c => c.VatID == customerid).FirstOrDefault();
+
+        public string GetCustomerLevel(string customerid) =>
+            customers.Where(c => c.VatID == customerid)
+                .FirstOrDefault().Level;
     }
 }
