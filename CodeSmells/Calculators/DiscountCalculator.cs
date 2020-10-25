@@ -84,16 +84,20 @@ namespace CodeSmells.Calculators
             return totalAfterDeduction;
         }
 
+        private decimal CalcOrderDiscountImapct(int orderid)
+        {
+            var totalAfter = GetOrderTotal(orderid);
+            return totalBefore[orderid] - totalAfter;
+        }
+
+
         public decimal GetDiscountImapct(Period period)
         {
-            var ordersIds = _orderRepository.GetOrderIds(period).ToList();
-            var totalDiff = 0m;
-            foreach (var orderid in ordersIds)
-            {
-                var totalAfter = GetOrderTotal(orderid);
-                totalDiff += totalBefore[orderid] - totalAfter;
-            }
-            return totalDiff;
+            return _orderRepository
+                .GetOrderIds(period)
+                .Aggregate<int, decimal>( 0,
+                    (total, orderid) => total += CalcOrderDiscountImapct(orderid)
+                );
         } 
     }
 }
