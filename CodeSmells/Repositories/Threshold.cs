@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CodeSmells.Repositories
 {
-    public class Treshold
+    public class Threshold
     {
         public string Level { get; }
         public decimal LimitBottom { get; }
@@ -10,7 +10,7 @@ namespace CodeSmells.Repositories
         public static bool isLevelValid(string level) =>
             (level == "standard" || level == "silver" || level == "gold");
 
-        public Treshold(string level, decimal limitBottom, double discount)
+        public Threshold(string level, decimal limitBottom, double discount)
         {
             if (!isLevelValid(level))
                 throw new ArgumentException(

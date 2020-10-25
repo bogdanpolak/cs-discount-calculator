@@ -20,7 +20,7 @@ namespace CodeSmells.Repositories
 
         public void AddCustomer(Customer customer)
         {
-            if (!Treshold.isLevelValid(customer.Level))
+            if (!Threshold.isLevelValid(customer.Level))
                 throw new ArgumentException(
                     $"Invalid customer level (actual value:{customer.Level}" +
                     ", but expected one of: standard, silver, gold", "customer");
