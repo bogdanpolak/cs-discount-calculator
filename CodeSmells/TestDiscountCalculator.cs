@@ -66,5 +66,13 @@ namespace CodeSmells
             var actual = calculator.GetOrderTotal(1);
             Assert.Equal(2371.60m, actual);
         }
+
+        [Fact]
+        public void DiscountImapct()
+        {
+            Period period = Period.CreateForMonth(2020, 09);
+            decimal actual = calculator.GetDiscountImapct(period);
+            Assert.Equal(616.85m, actual);
+        }
     }
 }

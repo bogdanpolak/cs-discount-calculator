@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CodeSmells.Repositories
@@ -46,6 +47,13 @@ namespace CodeSmells.Repositories
             var orderitem = orders.Where(o => o.OrderId == orderid).FirstOrDefault();
             if (orderitem != null)
                 orders.Remove(orderitem);
+        }
+
+        public IEnumerable<int> GetOrderIds(Period period)
+        {
+            if (period.Start.Year < 2000)
+                throw new ArgumentException("Invalid parametr value", "period");
+            return orders.Select(oi => oi.OrderId).Distinct();
         }
 
         public IEnumerable<OrderItem> GetOrder(int orderId)

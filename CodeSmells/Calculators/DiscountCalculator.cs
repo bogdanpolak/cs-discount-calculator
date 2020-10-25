@@ -34,6 +34,8 @@ namespace CodeSmells.Calculators
             }
         }
 
+        Dictionary<int, decimal> totalBefore = new Dictionary<int, decimal>();
+
         const decimal MAX_PRICE = 999999999.00m;
 
         private List<Discount> discounts = new List<Discount>();
@@ -58,6 +60,7 @@ namespace CodeSmells.Calculators
             var customerId = orderItems.Select(c => c.CustomerId).FirstOrDefault();
             string level = _customerRepository.GetCustomerLevel(customerId);
             var totalBeforeDiscount = orderItems.Sum(oi => oi.UnitPrice * oi.Units);
+            totalBefore[orderId] = totalBeforeDiscount;
             if (discounts.Count == 0)
                 GenerateDiscountTable(level);
             var discountValue = discounts
@@ -80,5 +83,17 @@ namespace CodeSmells.Calculators
             }
             return totalAfterDeduction;
         }
+
+        public decimal GetDiscountImapct(Period period)
+        {
+            var ordersIds = _orderRepository.GetOrderIds(period).ToList();
+            var totalDiff = 0m;
+            foreach (var orderid in ordersIds)
+            {
+                var totalAfter = GetOrderTotal(orderid);
+                totalDiff += totalBefore[orderid] - totalAfter;
+            }
+            return totalDiff;
+        } 
     }
 }
